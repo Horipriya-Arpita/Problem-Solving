@@ -196,3 +196,231 @@ int main()
 
 #### SOURCE:
 [forthright48](https://forthright48.com/chinese-remainder-theorem-part-1-coprime-moduli/)
+
+# Strong Form
+Given two sequences of numbers A=[a1,a2,…,an] and M=[m1,m2,…,mn], find the smallest solution to the following linear congruence equations if it exists:
+<pre>x≡a1(mod m1)
+x≡a2(mod m2)
+  ...
+x≡an(mod mn)</pre>
+__Note:__ The elements of M are not pairwise coprime
+
+### Working With Two Equations
+Before we go on to deal with n equations, let us first see how to deal with two equations. Just like before, we will try to merge two equations into one.
+
+So given the two equation x≡a1(mod m1) and x≡a2(mod m2), find the smallest solution to x if it exists.
+
+#### Existance of Solution
+Suppose, gcd(m1,m2)=g. In that case, the following constraint must be satisfied: a1≡a2(mod g), otherwise there does not exist any solution to x. Why is that?
+
+<pre>We know that, 
+x≡a1(mod m1)
+or, x–a1≡0(mod m1)
+or, m1|x–a1
+
+Since m1 divides x–a1, any divisor of m1 also divides x–a1, including g.
+
+∴ x–a1≡0(mod g).
+
+Similarly, we can show that, x–a2≡0(mod g) is also true.
+
+∴ x–a1≡x–a2(mod g)
+or, a1≡a2(mod g)
+or, a1–a2≡(mod g)
+or g|(a1–a2)
+
+Therefore, g must divide a1–a2, otherwise, there is conflict and no solution exists. 
+From this point, we assume that g|a1–a2.</pre>
+
+#### Finding Solution
+Just like last time, we use Bezout’s identity to find a solution to x. From Bezout’s identity, we know that there exists a solution to the following equations:
+<pre>    m1p+m2q=g
+Since both side is divisible by g, we can rewrite it as:
+      m1gp+m2gq=1 </pre>
+Using Extended Euclidean Algorithm, we can easily find values of p and q. Simply call the function ext_gcd(m1/g, m2/g, p, q) and it should be calculated automatically.
+
+Once we know the value of p and q, we can claim that the solution to x is the following:
+<pre>   x=a1m2gq+a2m1gp</pre>
+Why is that? Look below.
+
+<pre>     x=a1m2gq+a2m1gp
+From Bezout’s Identity, we know that m1gp=1–m2gq 
+So, x=a1m2gq+a2(1–m2gq)
+or, x=a2+(a1–a2)m2gq
+Since, g|(a1–a2)
+x=a2+a1–a2gm2q
+∴ x≡a2(mod m2)
+Similarly, x≡a1(mod m1)</pre>
+Hence, x=a1m1gq+a2m2gp is a valid solution. It may not be the smallest solution though.
+
+#### Finding Smallest Solution
+Let x1 and x2 be adjacent two solutions. Then the following are true:
+<pre>x1≡a1(mod m1)
+x2≡a1(mod m1)
+x1≡x2(mod m1)
+x1–x2≡0(mod m1)
+m1|x1–x2
+Similarly, m2|x1–x2 </pre>
+Since both m1 and m2 divides x1–x2, we can say that LCM(m1,m2) also divides x1−x2.
+
+Since any two adjacent solution of x is divisible by L=LCM(m1,m2), then there cannot be more than one solution that lies on the range 0 to L−1. Hence, the following is the smallest solution to x:
+
+<pre>   x≡a1m2gq+a2m1gp(mod LCM(m1,m2)) </pre>
+
+#### Working with n Equations
+When there are n equations, we simply merge two equations at a time until there is only one left. The last remaining equation is our desired answer. If at any point, if we are unable to merge two equations due to conflict, i.e, ai≢aj (mod GCD(mi,mj)), then there is no solution.
+
+### CODE:
+For Two Equations:
+```c++
+#include<bits/stdc++.h>
+
+using namespace std;
+
+struct xyg{
+    int x;
+    int y;
+    int g;
+};
+
+xyg ext_euclid(int a, int b)
+{
+    xyg ans;
+    if(b==0)
+    {
+        ans.x = 1;
+        ans.y = 0;
+        ans.g = a;
+        return ans;
+    }
+
+    xyg sm_ans = ext_euclid(b,a%b);
+
+    ans.x = sm_ans.y;
+    ans.y = sm_ans.x - (a/b)*sm_ans.y;
+    ans.g = sm_ans.g;
+
+    return ans;
+}
+
+int crt_strong(int a1, int a2, int m1, int m2)
+{
+    int gc = __gcd(m1,m2);
+
+    if(a1%gc != a2%gc){
+
+        return -1;
+    }
+
+    cout<<gc<<"gc"<<endl;
+    xyg pq = ext_euclid(m1/gc,m2/gc);
+
+    int mod = (m1/gc)*m2;
+
+    int p = pq.x;
+    int q = pq.y;
+
+    cout<<p<<" " <<q<<endl;
+
+    int x = (a1*(m2/gc)*q + a2*(m1/gc)*p) % mod;
+
+    x+=mod;
+    x+=mod;
+
+    return x;
+}
+
+int main()
+{
+    int a1,a2,m1,m2;
+    cin>>a1>>a2>>m1>>m2;
+
+    int x = crt_strong(a1,a2,m1,m2);
+
+    cout<<x<<endl;
+
+
+    return 0;
+}
+```
+For many equations:
+```c++
+#include<bits/stdc++.h>
+
+using namespace std;
+
+struct xyg{
+    int x;
+    int y;
+    int g;
+};
+
+xyg ext_euclid(int a, int b)
+{
+    xyg ans;
+    if(b==0)
+    {
+        ans.x = 1;
+        ans.y = 0;
+        ans.g = a;
+        return ans;
+    }
+
+    xyg sm_ans = ext_euclid(b,a%b);
+
+    ans.x = sm_ans.y;
+    ans.y = sm_ans.x - (a/b)*sm_ans.y;
+    ans.g = sm_ans.g;
+
+    return ans;
+}
+
+int crt_strong(int a[], int m[])
+{
+    int a1,a2,m1,m2,x,mod;
+    a1 = a[0];
+    m1 = m[0];
+
+    for(int i = 1; i < 3; i++)
+    {
+        a2 = a[i];
+        m2 = m[i];
+
+        int g = __gcd(m1,m2);
+
+        if(a1%g != a2%g){
+            return -1;
+        }
+
+        xyg pq = ext_euclid(m1/g,m2/g);
+        int p = pq.x;
+        int q = pq.y;
+
+        mod = (m1/g)*m2;
+
+        x = (a1*(m2/g)*q + a2*(m1/g)*p) % mod;
+
+        a1 = x;
+        m1 = mod;
+    }
+
+    if (x < 0) x += mod; /** Result is not suppose to be negative*/
+    return x;
+}
+
+int main()
+{
+    int a[] = {2, 2, 4};
+    int m[] = {3, 6, 5};
+
+    int x = crt_strong(a,m);
+
+    cout<<x<<endl;
+
+    return 0;
+}
+
+```
+
+### SOURCE:
+[forthright48](https://forthright48.com/chinese-remainder-theorem-part-2-non-coprime-moduli/)
