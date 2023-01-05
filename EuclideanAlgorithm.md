@@ -57,6 +57,7 @@ int main()
 [GreeksForGreeks](https://www.geeksforgeeks.org/euclidean-algorithms-basic-and-extended/)
 
 
+
 # Extended Euclidean Algorithm:
 
 GCD(a,b) has the property that:  ax + by = gcd(a,b)  
@@ -130,4 +131,79 @@ int main()
 #### SOURCE:
 [GreeksForGreeks](https://www.geeksforgeeks.org/euclidean-algorithms-basic-and-extended/)  
 [ApnaCollege](https://www.youtube.com/watch?v=0oP6XLTI2tY)  
+
+
+# Modular Multiplicative Inverse:
+
+Consider The equation :
+<pre>     ( A * B ) % M = 1  </pre>
+<pre>
+Examples               Ans
+(17*B) % 3 = 1         2  
+(14*B) % 5 = 1         4  
+(12*B) % 7 = 1         3  
+(19*B) % 2 = 1         1  </pre>
+Now we can say that :
+<pre>     A * B == 1     (mod M)  
+=> (A*B - 1) == 0   (mod M) 
+=>  A*B - 1 = Mq   
+=>  A*B + Mq = 1  </pre>
+
+Here B is the value of x in our Extended Euclid Algorithm  
+
+#### CODE: 
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+
+struct xyg{
+    int x;
+    int y;
+    int g;
+};
+
+xyg exteuclid(int a, int b)
+{
+    xyg ans;
+    if(b==0)
+    {
+        ans.x=1;
+        ans.y=0;
+        ans.g=a;
+
+        return ans;
+    }
+
+    xyg sm = exteuclid(b,a%b);
+    ans.x = sm.y;
+    ans.y = sm.x - ((a/b)*sm.y);
+    ans.g = sm.g;
+
+    return ans;
+}
+
+int inverse(int a, int b)
+{
+    xyg ans = exteuclid(a,b);
+
+    return ans.x;
+}
+
+int main()
+{
+
+    int a,m;
+    cin>>a>>m;
+
+    int p = inverse(a,m);
+    cout<<p<<endl;
+
+
+    return 0;
+}
+
+```
+
+#### SOURCE:
+[ApnaCollege](https://www.youtube.com/watch?v=jWD-BQmbhkk&t=162s)
 
