@@ -192,18 +192,244 @@ int main()
 # Merge Sort 
 ### CODE:
 ```c++
+#include<bits/stdc++.h>
+
+using namespace std;
+
+void Merge(int ar[], int m, int l, int r)
+{
+    int p = m - l + 1;
+    int q = r - m;
+
+    int a[p], b[q],i,j,x=l,y=m+1;
+    for(i=0; i<p; i++)
+    {
+        a[i] = ar[x];
+        x++;
+    }
+
+    for(i=0; i<q; i++)
+    {
+        b[i] = ar[y];
+        y++;
+    }
+    i=0, j=0;
+    int k=l;
+    while(i<p && j<q)
+    {
+        if(a[i]<b[j])
+        {
+            ar[k] = a[i];
+            k++;
+            i++;
+        }
+        else
+        {
+            ar[k] = b[j];
+            k++;
+            j++;
+        }
+    }
+
+    while(i<p)
+    {
+        ar[k] = a[i];
+        k++;
+        i++;
+    }
+
+    while(j<q)
+    {
+        ar[k] = b[j];
+        k++;
+        j++;
+    }
+
+}
+
+void Merge_sort(int ar[], int l, int r)
+{
+    if(l<r)
+    {
+        int m = (l+r)/2;
+        Merge_sort(ar,l,m);
+        Merge_sort(ar,m+1,r);
+
+        Merge(ar,m,l,r);
+    }
+}
+
+int main()
+{
+    int ar[] = {3,6,4,8,9,1,5,6};
+    int n = sizeof(ar)/sizeof(ar[0]);
+
+    cout<<"Before Sorting ... "<<endl;
+
+    for(int i =0 ; i<n; i++)
+    {
+        cout<<ar[i]<<" ";
+    }
+    cout<<endl;
+
+    Merge_sort(ar,0,n-1);
+
+    cout<<"After Sorting ... "<<endl;
+
+    for(int i =0 ; i<n; i++)
+    {
+        cout<<ar[i]<<" ";
+    }
+    cout<<endl;
+
+    return 0;
+}
 
 ```
-
 ### SOURCE:
 [ApnaCollege](https://www.youtube.com/watch?v=4z9I6ZmeLOQ) 
 
 # Quick Sort 
 ### CODE:
 ```c++
+#include<bits/stdc++.h>
 
+using namespace std;
+
+int partitionn(int ar[], int l, int r)
+{
+    int piv = ar[r];
+    int i=l-1,j;
+
+    for(j=l; j<r; j++)
+    {
+        if(ar[j]<piv)
+        {
+            i++;
+            swap(ar[i],ar[j]);
+        }
+    }
+
+    swap(ar[i+1],ar[r]);
+
+    return i+1;
+}
+
+void Quick_sort(int ar[], int l, int r)
+{
+    int m = (l+r)/2;
+    swap(ar[m],ar[r]);
+
+    if(l<r)
+    {
+        int piv = partitionn(ar,l,r);
+        Quick_sort(ar,l,piv-1);
+        Quick_sort(ar,piv+1,r);
+    }
+
+}
+int main()
+{
+    int ar[] = {6,3,9,5,2,8,7};
+    int n = sizeof(ar)/sizeof(ar[0]);
+
+    Quick_sort(ar,0,n-1);
+
+    cout<<"After Sorting ... "<<endl;
+
+    for(int i =0 ; i<n; i++)
+    {
+        cout<<ar[i]<<" ";
+    }
+    cout<<endl;
+
+    return 0;
+}
 ```
 ### SOURCE:
 [ApnaCollege](https://www.youtube.com/watch?v=Dl6HT-NM_q4&t=713s)
 
 # Heap Sort 
+### CODE:
+```c++
+#include<bits/stdc++.h>
+
+using namespace std;
+
+void heapify(int ar[], int n, int i)
+{
+    int m = i;
+    int b = 2*i+1;
+    int d = 2*i+2;
+
+    if(b<n && ar[m]<ar[b])
+    {
+        m = b;
+    }
+    if(d<n && ar[m]<ar[d])
+    {
+        m = d;
+    }
+
+    if(m!=i)
+    {
+        swap(ar[i],ar[m]);
+        heapify(ar,n,m);
+    }
+}
+
+void Heap_sort(int ar[], int n)
+{
+    int i, mh[n+1];
+    cout<<"After creating max heap..."<<endl;
+
+    //creating max heap...
+    for(i=n/2-1; i>=0; i--)
+    {
+        heapify(ar,n,i);
+    }
+
+    for(i = 0 ; i<n; i++)
+    {
+        cout<<ar[i]<<" ";
+
+    }
+
+    cout<<endl;
+    for(i=n-1; i>=0; i--)
+    {
+        swap(ar[0],ar[i]);
+        heapify(ar,i,0);
+    }
+}
+
+int main()
+{
+    int ar[] = { 25, 35, 15, 20, 10, 60, 55};
+    int n = sizeof(ar)/sizeof(ar[0]);
+
+    cout<<"Before implementation..."<<endl;
+    for(int i = 0 ; i<n; i++)
+    {
+        cout<<ar[i]<<" ";
+    }
+    cout<<endl;
+
+    Heap_sort(ar,n);
+
+    cout<<"Sorted Array..."<<endl;
+    for(int i = 0 ; i<n; i++)
+    {
+        cout<<ar[i]<<" ";
+    }
+    cout<<endl;
+
+    return 0;
+}
+
+```
+### SOURCE:
+[AbdulBari](https://www.youtube.com/watch?v=HqPJF2L5h9U) 
+[GreeksForGreeks](https://www.geeksforgeeks.org/heap-sort/)
+[JennysLecture](https://www.youtube.com/watch?v=Q_eia3jC9Ts&t=1537s) 
+
