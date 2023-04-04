@@ -1,3 +1,8 @@
+/*
+Problem Link :
+https://codeforces.com/problemset/problem/60/A
+*/
+
 #include<bits/stdc++.h>
 
 using namespace std;
